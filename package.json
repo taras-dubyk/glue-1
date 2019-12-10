@@ -1,6 +1,6 @@
 {
 	"name": "Glue",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"versionDate": "2019-12-10",
 	"author": "hackolade",
 	"engines": {
@@ -12,7 +12,7 @@
 			"applicationTarget": "Glue",
 			"title": "AWS Glue Data Catalog",
 			"versions": [
-				"2.x",
+				"2.x"
 			]
 		},
 		"features": {
