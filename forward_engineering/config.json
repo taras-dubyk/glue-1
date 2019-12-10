@@ -1,0 +1,12 @@
+{
+	"extension": "txt",
+	"filterName": "AWS Glue CLI",
+	"namePrefix": "Glue",
+	"hasUpdateScript": true,
+	"applyScriptToInstance": true,
+	"level": {
+		"entity": true,
+		"container": true
+	},
+	"resolvedDefinitions": true
+}

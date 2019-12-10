@@ -1,0 +1,10 @@
+{
+  "name": "Glue",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Hackolade",
+  "installed": true,
+  "dependencies": {
+    "aws-sdk": "^2.586.0"
+  }
+}
