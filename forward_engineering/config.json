@@ -2,11 +2,27 @@
 	"extension": "txt",
 	"filterName": "AWS Glue CLI",
 	"namePrefix": "Glue",
-	"hasUpdateScript": true,
 	"applyScriptToInstance": true,
 	"level": {
 		"entity": true,
 		"container": true
 	},
+	"options": [
+		{
+			"name": "AWS Glue CLI Script",
+			"keyword": "awsCli",
+			"fileExtensions": [{
+				"label": "application/txt", "value": "txt"
+			}]
+		},
+		{
+			"name": "HiveQL Script",
+			"keyword": "hiveQl",
+			"disableApplyScriptToInstance": true,
+			"fileExtensions": [{
+				"label": "application/hql", "value": "hql"
+			}]
+		}
+	],
 	"resolvedDefinitions": true
 }
