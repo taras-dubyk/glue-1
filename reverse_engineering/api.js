@@ -75,6 +75,8 @@ module.exports = {
 		const getDbCollections = async () => {
 			try {
 				const tablesDataPromise = databases.map(async dbName => {
+					const db = await this.glueInstance.getDatabase({ Name: dbName }).promise();
+					const dbDescription = db.Database.Description;
 					const dbTables = tables[dbName].map(async tableName => {
 						const rawTableData = await this.glueInstance
 							.getTable({ DatabaseName: dbName, Name: tableName })
@@ -84,7 +86,7 @@ module.exports = {
 							containerName: dbName,
 							entityName: tableName
 						});
-						return mapTableData(rawTableData);
+						return mapTableData(rawTableData, dbDescription);
 					});
 					return await Promise.all(dbTables);
 				});
@@ -106,10 +108,13 @@ module.exports = {
 	}
 };
 
-const mapTableData = ({ Table }) => {
+const mapTableData = ({ Table }, dbDescription) => {
 	const tableData = {
 		dbName: Table.DatabaseName,
 		collectionName: Table.Name,
+		bucketInfo: {
+			description: dbDescription
+		},
 		entityLevel: {
 			description: Table.Description,
 			externalTable: Table.TableType === 'EXTERNAL_TABLE',
