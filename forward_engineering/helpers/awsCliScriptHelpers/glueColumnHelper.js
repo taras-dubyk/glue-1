@@ -1,9 +1,11 @@
-const { getTypeByProperty } = require('../columnHelper');
+const { getTypeByProperty, getUnionFromAllOf, getUnionFromOneOf } = require('../columnHelper');
 
-const getGlueTableColumns = (properties = {}) => {
-	return Object.entries(properties)
+const getGlueTableColumns = (properties = {}, oneOf, allOf) => {
+	const unionColumns = getUnionColumns(allOf, oneOf);
+	const columns = Object.entries(properties)
 		.filter(([key, value]) => !value.compositePartitionKey)
 		.map(([key, value]) => mapColumn(key, value));
+	return [...unionColumns, ...columns];
 };
 
 const getGluePartitionKeyTableColumns = (properties = {}) => {
@@ -35,6 +37,31 @@ const mapColumn = (name, data) => {
 		Type: getTypeByProperty(data),
 		Comment: data.comments
 	};
+}
+
+const getUnionColumns = (allOf, oneOf) => {
+	let columns = [];
+
+	if (Array.isArray(oneOf)) {
+		const unions = getUnionFromOneOf(getTypeByProperty)({ oneOf });
+		const oneOfColumns = Object.keys(unions).reduce((acc, typeName) => {
+			acc = [...acc, { Name: typeName, Type: unions[typeName] }]
+			return acc;
+		}, []);
+		columns = [...columns, ...oneOfColumns];
+	} 
+	
+	if (Array.isArray(allOf)) {
+		const unions = getUnionFromAllOf(getTypeByProperty)({ allOf });
+		
+		const allOfColumns = Object.keys(unions).reduce((acc, typeName) => {
+			acc = [...acc, { Name: typeName, Type: unions[typeName] }]
+			return acc;
+		}, []);
+		columns = [...columns, ...allOfColumns];
+	}
+
+	return columns;
 }
 
 module.exports = {

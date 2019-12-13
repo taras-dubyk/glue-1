@@ -220,7 +220,8 @@ const getParserByType = (type) => {
 		case 'struct': return parseStruct;
 		case 'map': return parseMap;
 		case 'array': return parseArray;
-		case 'uniontype': return parseUnion;
+		case 'uniontype':
+		case 'union': return parseUnion;
 		default: return parsePrimitive;
 	}
 };
@@ -279,5 +280,6 @@ const setProperty = (columnName, subSchema, jsonSchema) => {
 
 module.exports = {
 	getJsonSchema,
-	getChoice
+	getChoice,
+	setProperty
 };
