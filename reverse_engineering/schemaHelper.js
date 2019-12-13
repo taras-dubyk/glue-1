@@ -13,8 +13,8 @@ const cleanContent = (str) => {
 
 const getType = str => {
 	const i = str.indexOf('<');
-	
-	return i < 0 ? str : str.slice(0, i)
+	const type = i < 0 ? str : str.slice(0, i);
+	return type.toLowerCase();
 };
 
 const splitContent = (content) => {
@@ -148,7 +148,7 @@ const parseArray = ([ content ], sample = []) => {
 };
 
 const parsePrimitive = ([ type ]) => {
-	const preparedType = type.trim();
+	const preparedType = type.trim().toLowerCase();
 	const hiveType = preparedType.replace(/\(.*?\)$/, "");
 	const modifiers = _.get(preparedType.match(/\((.*?)\)$/), "[1]", "").split(",");
 	

@@ -144,7 +144,8 @@ const mapTableData = ({ Table }, dbDescription) => {
 
 const getColumns = (columns) => {
 	return columns.reduce((acc, item) => {
-		acc[item.Name] = Object.assign({}, schemaHelper.getJsonSchema(item.Type), { comments: item.Comment });
+		const sanitizedTypeString = item.Type.replace(/\s/g, '');
+		acc[item.Name] = Object.assign({}, schemaHelper.getJsonSchema(sanitizedTypeString), { comments: item.Comment });
 		return acc;
 	}, {});
 }
