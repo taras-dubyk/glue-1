@@ -8,7 +8,7 @@ const getGlueTableCreateStatement = (tableSchema, databaseName) => {
 			Name: tableSchema.title,
 			Description: tableSchema.description,
 			StorageDescriptor: {
-				Columns: getGlueTableColumns(tableSchema.properties),
+				Columns: getGlueTableColumns(tableSchema.properties, tableSchema.oneOf, tableSchema.allOf),
 				Location: tableSchema.location,
 				InputFormat: tableSchema.inputFormatClassname,
 				OutputFormat: tableSchema.outputFormatClassname,
@@ -38,7 +38,7 @@ const mapSerdeInfo = (tableSchema) => {
 	};
 }
 
-const getSerdePathParams = (parameterPaths = [], properties) => {
+const getSerdePathParams = (parameterPaths = [], properties = {}) => {
 	return parameterPaths.map(({ keyId }) => {
 		const property = Object.entries(properties).find(([key, value]) => value.GUID === keyId);
 		const propertyName = property && property[0];

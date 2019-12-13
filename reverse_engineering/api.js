@@ -134,17 +134,17 @@ const mapTableData = ({ Table }, dbDescription) => {
 		},
 		documents: [],
 		validation: {
-			jsonSchema: {
-				properties: getColumns([...Table.StorageDescriptor.Columns, ...Table.PartitionKeys])
-			}
-		} 
+			jsonSchema:	getColumns([...Table.StorageDescriptor.Columns, ...Table.PartitionKeys])
+		}
 	};
 	return tableData;
 }
 
 const getColumns = (columns) => {
 	return columns.reduce((acc, item) => {
-		acc[item.Name] = Object.assign({}, schemaHelper.getJsonSchema(item.Type), { comments: item.Comment });
+		const sanitizedTypeString = item.Type.replace(/\s/g, '');
+		let columnSchema = schemaHelper.getJsonSchema(sanitizedTypeString);
+		schemaHelper.setProperty(item.Name, columnSchema, acc);
 		return acc;
 	}, {});
 }
