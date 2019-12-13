@@ -151,7 +151,7 @@ const getUnionTypeFromMultiple = getTypeByProperty => property => {
 		return getTypeByProperty(getPropertyByType(dataType))
 	});
 
-	return `uniontype<${types.join(',')}>`;
+	return `union<${types.join(',')}>`;
 };
 
 const getUnionFromOneOf = getTypeByProperty => property => {
@@ -172,7 +172,7 @@ const getUnionFromOneOf = getTypeByProperty => property => {
 	}, {});
 
 	return Object.keys(types).reduce((result, propertyName) => {
-		result[propertyName] = `uniontype<${(types[propertyName] || []).join(', ')}>`;
+		result[propertyName] = `union<${(types[propertyName] || []).join(', ')}>`;
 
 		return result;
 	}, {});
@@ -286,5 +286,7 @@ module.exports = {
 	getColumns,
 	getColumnsStatement,
 	getColumnStatement,
-	getTypeByProperty
+	getTypeByProperty,
+	getUnionFromOneOf,
+	getUnionFromAllOf
 };

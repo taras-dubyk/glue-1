@@ -1,7 +1,6 @@
 'use strict'
 
-const aws = require('aws-sdk');
-
+const aws = require('../reverse_engineering/node_modules/aws-sdk');
 const { getDatabaseStatement } = require('./helpers/databaseHelper');
 const { getTableStatement } = require('./helpers/tableHelper');
 const { getIndexes } = require('./helpers/indexHelper');
@@ -20,24 +19,24 @@ module.exports = {
 			const containerData = data.containerData;
 			const entityData = data.entityData;
 
-			if (!data.isUpdateScript) {
-				const script = buildAWSCLIScript(containerData, jsonSchema);
-				callback(null, script);
-				return;
+			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
+				return callback(null, buildHiveScript(
+					getDatabaseStatement(containerData),
+					getTableStatement(containerData, entityData, jsonSchema, [
+						modelDefinitions,
+						internalDefinitions,
+						externalDefinitions
+					]),
+					getIndexes(containerData, entityData, jsonSchema, [
+						modelDefinitions,
+						internalDefinitions,
+						externalDefinitions
+					])
+				));
 			}
-			callback(null, buildHiveScript(
-				getDatabaseStatement(containerData),
-				getTableStatement(containerData, entityData, jsonSchema, [
-					modelDefinitions,
-					internalDefinitions,
-					externalDefinitions
-				]),
-				getIndexes(containerData, entityData, jsonSchema, [
-					modelDefinitions,
-					internalDefinitions,
-					externalDefinitions
-				])
-			));
+
+			const script = buildAWSCLIScript(containerData, jsonSchema);
+			return callback(null, script);
 		} catch (e) {
 			logger.log('error', { message: e.message, stack: e.stack }, 'AWS Glue -Engineering Error');
 
@@ -55,57 +54,55 @@ module.exports = {
 			const databaseStatement = getDatabaseStatement(containerData);
 			const jsonSchema = parseEntities(data.entities, data.jsonSchema);
 			const internalDefinitions = parseEntities(data.entities, data.internalDefinitions);
-
-			if (!data.isUpdateScript) {
-				const script = buildAWSCLIModelScript(containerData, jsonSchema);
-				callback(null, script);
-				return;
-			}
-
-			const foreignKeyHashTable = foreignKeyHelper.getForeignKeyHashTable(
-				data.relationships,
-				data.entities,
-				data.entityData,
-				jsonSchema,
-				internalDefinitions,
-				[
-					modelDefinitions,
-					externalDefinitions
-				]
-			);
-
-			const entities = data.entities.reduce((result, entityId) => {
-				const args = [
-					containerData,
-					data.entityData[entityId],
-					jsonSchema[entityId], [
-						internalDefinitions[entityId],
+			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
+				const foreignKeyHashTable = foreignKeyHelper.getForeignKeyHashTable(
+					data.relationships,
+					data.entities,
+					data.entityData,
+					jsonSchema,
+					internalDefinitions,
+					[
 						modelDefinitions,
 						externalDefinitions
 					]
-				];
+				);
+	
+				const entities = data.entities.reduce((result, entityId) => {
+					const args = [
+						containerData,
+						data.entityData[entityId],
+						jsonSchema[entityId], [
+							internalDefinitions[entityId],
+							modelDefinitions,
+							externalDefinitions
+						]
+					];
+	
+					return result.concat([
+						getTableStatement(...args),
+						getIndexes(...args),
+					]);
+				}, []);
+	
+				const foreignKeys = data.entities.reduce((result, entityId) => {
+					const foreignKeyStatement = foreignKeyHelper.getForeignKeyStatementsByHashItem(foreignKeyHashTable[entityId] || {});
+				
+					if (foreignKeyStatement) {
+						return [...result, foreignKeyStatement];
+					}
+	
+					return result;
+				}, []).join('\n');
+	
+				return callback(null, buildHiveScript(
+					databaseStatement,
+					...entities,
+					foreignKeys
+				));
+			}
 
-				return result.concat([
-					getTableStatement(...args),
-					getIndexes(...args),
-				]);
-			}, []);
-
-			const foreignKeys = data.entities.reduce((result, entityId) => {
-				const foreignKeyStatement = foreignKeyHelper.getForeignKeyStatementsByHashItem(foreignKeyHashTable[entityId] || {});
-			
-				if (foreignKeyStatement) {
-					return [...result, foreignKeyStatement];
-				}
-
-				return result;
-			}, []).join('\n');
-
-			callback(null, buildHiveScript(
-				databaseStatement,
-				...entities,
-				foreignKeys
-			));
+			const script = buildAWSCLIModelScript(containerData, jsonSchema);
+			return callback(null, script);
 		} catch (e) {
 			logger.log('error', { message: e.message, stack: e.stack }, 'Cassandra Forward-Engineering Error');
 
@@ -123,7 +120,7 @@ module.exports = {
 		logger.clear();
 		logger.log('info', data, data.hiddenKeys);
 
-		const glueInstance = getGlueInstance(data);
+		const glueInstance = getGlueInstance(data, app);
 
 		try {
 			const { db, table } = getApiStatements(data.script);
@@ -153,7 +150,7 @@ module.exports = {
 	async testConnection(connectionInfo, logger, callback, app) {
 		logger.log('info', connectionInfo, 'Test connection', connectionInfo.hiddenKeys);
 
-		const glueInstance = getGlueInstance(connectionInfo);
+		const glueInstance = getGlueInstance(connectionInfo, app);
 
 		try {
 			await glueInstance.getDatabases().promise();
@@ -179,7 +176,7 @@ const buildAWSCLIModelScript = (containerData, tablesSchemas = {}) => {
 	return composeCLIStatements([dbStatement, ...tablesStatements]);
 }
 
-const getGlueInstance = (connectionInfo) => {
+const getGlueInstance = (connectionInfo, app) => {
 	const { accessKeyId, secretAccessKey, region } = connectionInfo;
 	aws.config.update({ accessKeyId, secretAccessKey, region });
 	return new aws.Glue();
