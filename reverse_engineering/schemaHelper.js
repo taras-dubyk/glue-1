@@ -278,6 +278,5 @@ const setProperty = (columnName, subSchema, jsonSchema) => {
 };
 
 module.exports = {
-	getJsonSchema,
-	getChoice
+	getJsonSchema
 };

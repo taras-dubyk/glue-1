@@ -1,6 +1,5 @@
 'use strict';
 
-const aws = require('aws-sdk');
 const _ = require('lodash');
 const logHelper = require('./logHelper');
 const schemaHelper = require('./schemaHelper');
@@ -9,6 +8,7 @@ this.glueInstance = null;
 
 module.exports = {
 	connect: function(connectionInfo, logger, cb, app) {
+		const aws = app.require('aws-sdk');
 		const { accessKeyId, secretAccessKey, region } = connectionInfo;
 		aws.config.update({ accessKeyId, secretAccessKey, region });
 
@@ -62,7 +62,7 @@ module.exports = {
 		};
 
 		logInfo('Retrieving databases and tables information', connectionInfo, logger);
-		this.connect(connectionInfo, logger, connectionCallback);
+		this.connect(connectionInfo, logger, connectionCallback, app);
 	},
 
 	getDbCollectionsData: function(data, logger, cb, app) {
