@@ -1,7 +1,5 @@
 'use strict'
 
-const aws = require('aws-sdk');
-
 const { getDatabaseStatement } = require('./helpers/databaseHelper');
 const { getTableStatement } = require('./helpers/tableHelper');
 const { getIndexes } = require('./helpers/indexHelper');
@@ -121,7 +119,7 @@ module.exports = {
 		logger.clear();
 		logger.log('info', data, data.hiddenKeys);
 
-		const glueInstance = getGlueInstance(data);
+		const glueInstance = getGlueInstance(data, app);
 
 		try {
 			const { db, table } = getApiStatements(data.script);
@@ -151,7 +149,7 @@ module.exports = {
 	async testConnection(connectionInfo, logger, callback, app) {
 		logger.log('info', connectionInfo, 'Test connection', connectionInfo.hiddenKeys);
 
-		const glueInstance = getGlueInstance(connectionInfo);
+		const glueInstance = getGlueInstance(connectionInfo, app);
 
 		try {
 			await glueInstance.getDatabases().promise();
@@ -177,7 +175,8 @@ const buildAWSCLIModelScript = (containerData, tablesSchemas = {}) => {
 	return composeCLIStatements([dbStatement, ...tablesStatements]);
 }
 
-const getGlueInstance = (connectionInfo) => {
+const getGlueInstance = (connectionInfo, app) => {
+	const aws = app.require('aws-sdk');
 	const { accessKeyId, secretAccessKey, region } = connectionInfo;
 	aws.config.update({ accessKeyId, secretAccessKey, region });
 	return new aws.Glue();
