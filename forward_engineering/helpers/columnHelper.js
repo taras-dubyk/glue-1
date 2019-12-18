@@ -54,28 +54,40 @@ const getPropertyByType = (type) => {
 	}, childTypeDescriptor.defaultValues || {});
 };
 
-const getArray = getTypeByProperty => property => {
-	let type;
-
+const getTypeForArrayLikeField = (getTypeByProperty, property) => {
 	if (Array.isArray(property.items)) {
-		type = getTypeByProperty(property.items[0]);
+		return getTypeByProperty(property.items[0]);
 	} else if (property.items) {
-		type = getTypeByProperty(property.items);
+		return getTypeByProperty(property.items);
 	} else if (Array.isArray(property.oneOf)) {
 		const unions = getUnionFromOneOf(getTypeByProperty)(property);
 		const name = Object.keys(unions)[0];
-		type = unions[name];
+		return unions[name];
 	} else if (Array.isArray(property.allOf)) {
 		const unions = getUnionFromAllOf(getTypeByProperty)(property);
 		const name = Object.keys(unions)[0];
-		type = unions[name];
+		return unions[name];
 	}
+}
+
+const getArray = getTypeByProperty => property => {
+	let type = getTypeForArrayLikeField(getTypeByProperty, property);
 
 	if (!type) {
 		type = getTypeByProperty(getChildBySubtype('array', property.subtype));
 	}
 
 	return `array<${type}>`;
+};
+
+const getSet = getTypeByProperty => property => {
+	let type = getTypeForArrayLikeField(getTypeByProperty, property);
+
+	if (!type) {
+		type = getTypeByProperty(getChildBySubtype('set', property.subtype));
+	}
+
+	return `set<${type}>`;
 };
 
 const getMapKey = (property) => {
@@ -215,6 +227,8 @@ const getTypeByProperty = (property) => {
 			return getArray(getTypeByProperty)(property);
 		case 'map':
 			return getMap(getTypeByProperty)(property);
+		case 'set':
+			return getSet(getTypeByProperty)(property);
 		case undefined:
 			return 'string';
 		default:

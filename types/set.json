@@ -1,0 +1,41 @@
+{
+	"name": "set",
+	"erdAbbreviation": "<set>",
+	"dtdAbbreviation": "[...]",
+	"parentType": "document",
+	"useSample": true,
+	"defaultValues": {
+		"subtype": "set<str>",
+		"properties": [],
+		"primaryKey": false,
+		"additionalItems": true,
+		"minItems": "",
+		"maxItems": "",
+		"uniqueItems": false
+	},
+	"subtypes": {
+		"set<str>": {
+			"childValueType": "text"
+		},
+		"set<num>": {
+			"childValueType": "numeric"
+		},
+		"set<ts>": {
+			"childValueType": "timestamp"
+		},
+		"set<date>": {
+			"childValueType": "date"
+		},
+		"set<intrvl>": {
+			"childValueType": "interval"
+		},
+		"set<map>": {
+			"childValueType": "map"
+		},
+		"set<struct>": {
+			"childValueType": "struct"
+		},
+		"set<union>": {
+		}
+	}
+}

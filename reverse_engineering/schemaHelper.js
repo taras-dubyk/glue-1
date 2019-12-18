@@ -122,8 +122,8 @@ const parseMap = ([ keySubtype, subtype ], sample = {}) => {
 	}, getMapKeyType(keySubtypeSchema)));
 };
 
-const getArraySubtypeByType = (type) => {
-	const subtype = (type) => `array<${type}>`;
+const getSubtypeByType = (type, parentType) => {
+	const subtype = (type) => `${parentType}<${type}>`;
 	switch(type) {
 		case "text": return subtype("txt");
 		case "numeric": return subtype("num");
@@ -142,7 +142,17 @@ const parseArray = ([ content ], sample = []) => {
 
 	return setProperty("New column", items, {
 		type: "array",
-		subtype: getArraySubtypeByType(items.type),
+		subtype: getSubtypeByType(items.type, 'array'),
+		items: {}
+	});
+};
+
+const parseSet = ([ content ], sample = []) => {
+	const items = getJsonSchema(content, sample[0]);
+
+	return setProperty("New column", items, {
+		type: "set",
+		subtype: getSubtypeByType(items.type, 'set'),
 		items: {}
 	});
 };
@@ -222,6 +232,7 @@ const getParserByType = (type) => {
 		case 'array': return parseArray;
 		case 'uniontype':
 		case 'union': return parseUnion;
+		case 'set': return parseSet;
 		default: return parsePrimitive;
 	}
 };
@@ -266,7 +277,7 @@ const getChoice = (jsonSchema, subSchemas, columnName) => {
 const setProperty = (columnName, subSchema, jsonSchema) => {
 	if (subSchema.type === "union") {
 		return getChoice(jsonSchema, subSchema.subSchemas, columnName);
-	} else if (jsonSchema.type === "array") {
+	} else if (jsonSchema.type === "array" || jsonSchema.type === "set") {
 		jsonSchema.items = subSchema;
 	} else {
 		if (!jsonSchema.properties) {
