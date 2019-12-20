@@ -99,7 +99,7 @@ module.exports = {
 					{ message: err.message, stack: err.stack, error: err },
 					'Retrieving databases and tables information'
 				);
-				cb();
+				cb({ message: err.message, stack: err.stack });
 			}
 		};
 
@@ -108,6 +108,7 @@ module.exports = {
 };
 
 const mapTableData = ({ Table }, dbDescription) => {
+	const classification = getClassification(Table.Parameters);
 	const tableData = {
 		dbName: Table.DatabaseName,
 		collectionName: Table.Name,
@@ -129,7 +130,9 @@ const mapTableData = ({ Table }, dbDescription) => {
 			inputFormatClassname: Table.StorageDescriptor.InputFormat,
 			outputFormatClassname: Table.StorageDescriptor.OutputFormat,
 			serDeLibrary: getSerDeLibrary(Table.StorageDescriptor.SerdeInfo),
-			parameterPaths: mapSerDeParameters(Table.StorageDescriptor.SerdeInfo)
+			parameterPaths: mapSerDePaths(Table.StorageDescriptor.SerdeInfo),
+			serDeParameters: mapSerDeParameters(Table.StorageDescriptor.SerdeInfo.Parameters),
+			classification
 		},
 		documents: [],
 		validation: {
@@ -159,8 +162,18 @@ const getSerDeLibrary = (data = {}) => {
 	return data.SerializationLibrary;
 }
 
-const mapSerDeParameters = (data = {}) => {
+const mapSerDePaths = (data = {}) => {
 	return _.get(data, 'Parameters.paths', '').split(',');
+}
+
+const mapSerDeParameters = (parameters = {}) => {
+	return Object.entries(parameters).reduce((acc, [key, value]) => {
+		if (key !== 'paths') {
+			acc.push({ serDeKey: key, serDeValue: value });
+			return acc;
+		}
+		return acc;
+	}, []);
 }
 
 const logInfo = (step, connectionInfo, logger) => {
@@ -168,4 +181,24 @@ const logInfo = (step, connectionInfo, logger) => {
 	logger.log('info', logHelper.getSystemInfo(connectionInfo.appVersion), step);
 	logger.log('info', connectionInfo, 'connectionInfo', connectionInfo.hiddenKeys);
 };
+
+const getClassification = (parameters = {}) => {
+	if (parameters.classification) {
+		switch (parameters.classification.toLowerCase()) {
+			case 'avro':
+				return 'Avro';
+			case 'csv':
+				return 'CSV';
+			case 'json':
+				return 'JSON';
+			case 'xml':
+				return 'XML';
+			case 'parquet':
+				return 'Parquet';
+			case 'orc':
+				return 'ORC';
+		}
+	}
+	return {};
+}
 

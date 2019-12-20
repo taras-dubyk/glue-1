@@ -289,6 +289,24 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
+				"propertyName": "Serde parameters",
+				"propertyType": "group",
+				"propertyKeyword": "serDeParameters",
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "serDeKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "serDeValue",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					}
+				]
+			},
+			{
 				"propertyName": "Stored as sub-directories",
 				"propertyKeyword": "StoredAsSubDirectories",
 				"propertyType": "checkbox",
@@ -351,6 +369,20 @@ making sure that you maintain a proper JSON format.
 				"propertyName": "Location",
 				"propertyKeyword": "location",
 				"propertyType": "text"
+			},
+			{
+				"propertyName": "Classification",
+				"propertyKeyword": "classification",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"Avro",
+					"CSV",
+					"JSON",
+					"XML",
+					"Parquet",
+					"ORC"
+				]
 			},
 			{
 				"propertyName": "Table properties",

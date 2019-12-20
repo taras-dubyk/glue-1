@@ -19,7 +19,7 @@ const getGlueTableCreateStatement = (tableSchema, databaseName) => {
 				SortColumns: getGlueTableSortingColumns(tableSchema.sortedByKey, tableSchema.properties),
 				StoredAsSubDirectories: tableSchema.StoredAsSubDirectories
 			},
-			Parameters: mapTableParameters(tableSchema.tableProperties),
+			Parameters: mapTableParameters(tableSchema),
 			PartitionKeys: getGluePartitionKeyTableColumns(tableSchema.properties),
 			TableType: tableSchema.externalTable ? 'EXTERNAL_TABLE' : ''
 		}
@@ -30,11 +30,11 @@ const getGlueTableCreateStatement = (tableSchema, databaseName) => {
 };
 
 const mapSerdeInfo = (tableSchema) => {
+	const paths = getSerdePathParams(tableSchema.parameterPaths, tableSchema.properties);
+	const serDeParameters = getSerDeParams(tableSchema.serDeParameters);
 	return {
 		SerializationLibrary: tableSchema.serDeLibrary,
-		Parameters: {
-			paths: getSerdePathParams(tableSchema.parameterPaths, tableSchema.properties)
-		}
+		Parameters: Object.assign({}, { paths }, serDeParameters)
 	};
 }
 
@@ -46,9 +46,19 @@ const getSerdePathParams = (parameterPaths = [], properties = {}) => {
 	}).join(',');
 }
 
-const mapTableParameters = (properties) => {
+const getSerDeParams = (params = []) => {
+	return params.reduce((acc, param) => {
+		acc[param.serDeKey] = param.serDeValue;
+		return acc;
+	}, {});
+}
+
+const mapTableParameters = (tableSchema) => {
 	try {
-		return JSON.parse(properties);
+		const props = JSON.parse(tableSchema.tableProperties);
+		return Object.assign({}, props, {
+			classification: tableSchema.classification ? tableSchema.classification.toLowerCase() : props.classification
+		});
 	} catch(err) {
 		return {};
 	}
