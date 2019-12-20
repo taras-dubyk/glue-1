@@ -55,10 +55,14 @@ const getSerDeParams = (params = []) => {
 
 const mapTableParameters = (tableSchema) => {
 	try {
-		const props = JSON.parse(tableSchema.tableProperties);
-		return Object.assign({}, props, {
-			classification: tableSchema.classification ? tableSchema.classification.toLowerCase() : props.classification
-		});
+		const props = (tableSchema.tableProperties || []).reduce((acc, prop) => {
+			acc[prop.tablePropKey] = prop.tablePropValue;
+			return acc;
+		}, {});
+		if (tableSchema.classification) {
+			props.classification = tableSchema.classification.toLowerCase();
+		}
+		return props;
 	} catch(err) {
 		return {};
 	}

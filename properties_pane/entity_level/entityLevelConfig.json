@@ -386,11 +386,21 @@ making sure that you maintain a proper JSON format.
 			},
 			{
 				"propertyName": "Table properties",
+				"propertyType": "group",
 				"propertyKeyword": "tableProperties",
-				"propertyType": "details",
-				"template": "textarea",
-				"markdown": false,
-				"valueType": "string"
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "tablePropKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "tablePropValue",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					}
+				]
 			},
 			{
 				"propertyName": "Comments",

@@ -118,7 +118,7 @@ const mapTableData = ({ Table }, dbDescription) => {
 		entityLevel: {
 			description: Table.Description,
 			externalTable: Table.TableType === 'EXTERNAL_TABLE',
-			tableProperties: JSON.stringify(Table.Parameters, null, 2),
+			tableProperties: mapTableProperties(Table.Parameters),
 			compositePartitionKey: Table.PartitionKeys.map(item => item.Name),
 			compositeClusteringKey: Table.StorageDescriptor.BucketColumns,
 			sortedByKey: mapSortColumns(Table.StorageDescriptor.SortColumns),
@@ -202,3 +202,14 @@ const getClassification = (parameters = {}) => {
 	return {};
 }
 
+const mapTableProperties = (parameters = {}) => {
+	return Object.entries(parameters).reduce((acc, [key, value]) => {
+		if (key === 'classification') {
+			return acc;
+		}
+		return acc.concat({
+			tablePropKey: key,
+			tablePropValue: value
+		});
+	}, []);
+}
