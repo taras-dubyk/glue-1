@@ -413,6 +413,35 @@ making sure that you maintain a proper JSON format.
 			"primaryKey",
 			"additionalProperties",
 			"comments"
+		],
+		"set": [
+			"name",
+			"code",
+			"sampleName",
+			"schemaId",
+			"refPath",
+			"description",
+			"type",
+			{
+				"propertyName": "Subtype",
+				"propertyKeyword": "subtype",
+				"propertyType": "select",
+				"options": [
+					"set<txt>",
+					"set<num>",
+					"set<ts>",
+					"set<date>",
+					"set<intrvl>",
+					"set<array>",
+					"set<map>",
+					"set<struct>",
+					"set<union>"
+				]
+			},
+			"required",
+			"primaryKey",
+			"dependencies",
+			"comments"
 		]
 	}
 } 

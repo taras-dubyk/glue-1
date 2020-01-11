@@ -289,6 +289,24 @@ making sure that you maintain a proper JSON format.
 				}
 			},
 			{
+				"propertyName": "Serde parameters",
+				"propertyType": "group",
+				"propertyKeyword": "serDeParameters",
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "serDeKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "serDeValue",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					}
+				]
+			},
+			{
 				"propertyName": "Stored as sub-directories",
 				"propertyKeyword": "StoredAsSubDirectories",
 				"propertyType": "checkbox",
@@ -353,12 +371,36 @@ making sure that you maintain a proper JSON format.
 				"propertyType": "text"
 			},
 			{
+				"propertyName": "Classification",
+				"propertyKeyword": "classification",
+				"propertyTooltip": "Select from list of options",
+				"propertyType": "select",
+				"options": [
+					"Avro",
+					"CSV",
+					"JSON",
+					"XML",
+					"Parquet",
+					"ORC"
+				]
+			},
+			{
 				"propertyName": "Table properties",
+				"propertyType": "group",
 				"propertyKeyword": "tableProperties",
-				"propertyType": "details",
-				"template": "textarea",
-				"markdown": false,
-				"valueType": "string"
+				"structure": [
+					{
+						"propertyName": "Key",
+						"propertyKeyword": "tablePropKey",
+						"propertyType": "text"
+					},
+					{
+						"propertyName": "Value",
+						"propertyKeyword": "tablePropValue",
+						"propertyTooltip": "",
+						"propertyType": "text"
+					}
+				]
 			},
 			{
 				"propertyName": "Comments",
