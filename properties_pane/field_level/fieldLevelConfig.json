@@ -157,7 +157,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"foreignCollection",
@@ -236,7 +238,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"foreignCollection",
@@ -267,7 +271,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"sample",
@@ -297,7 +303,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"comments"
@@ -330,7 +338,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"sample",
@@ -363,7 +373,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"sample",
@@ -395,7 +407,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"sample",
@@ -445,7 +459,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"additionalItems",
@@ -536,7 +552,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"additionalProperties",
@@ -569,7 +587,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"additionalProperties",
 			"comments"
@@ -614,7 +634,9 @@ making sure that you maintain a proper JSON format.
 			{
 				"propertyName": "Check",
 				"propertyKeyword": "check",
-				"propertyType": "text"
+				"propertyType": "details",
+				"template": "textarea",
+				"markdown": false
 			},
 			"dependencies",
 			"comments"
