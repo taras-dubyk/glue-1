@@ -139,10 +139,26 @@ making sure that you maintain a proper JSON format.
 			"pattern",
 			"minLength",
 			"maxLength",
-			"default",
 			"enum",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			"default",
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"foreignCollection",
 			"foreignField",
@@ -202,10 +218,26 @@ making sure that you maintain a proper JSON format.
 			},
 			"pattern",
 			"unit",
-			"default",
 			"enum",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			"default",
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"foreignCollection",
 			"foreignField",
@@ -219,8 +251,24 @@ making sure that you maintain a proper JSON format.
 			"schemaId",
 			"description",
 			"type",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"default",
-			"required",
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"sample",
 			"comments"
@@ -233,8 +281,24 @@ making sure that you maintain a proper JSON format.
 			"refPath",
 			"description",
 			"type",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"comments"
 		],
@@ -248,10 +312,26 @@ making sure that you maintain a proper JSON format.
 			"description",
 			"type",
 			"pattern",
-			"default",
 			"enum",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			"default",
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"sample",
 			"comments"
@@ -265,10 +345,26 @@ making sure that you maintain a proper JSON format.
 			"description",
 			"type",
 			"pattern",
-			"default",
 			"enum",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			"default",
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"sample",
 			"comments"
@@ -281,10 +377,26 @@ making sure that you maintain a proper JSON format.
 			"description",
 			"type",
 			"pattern",
-			"default",
 			"enum",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			"default",
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"sample",
 			"comments"
@@ -317,8 +429,24 @@ making sure that you maintain a proper JSON format.
 			"minItems",
 			"maxItems",
 			"uniqueItems",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"additionalItems",
 			"comments"
@@ -392,8 +520,24 @@ making sure that you maintain a proper JSON format.
 			},
 			"minProperties",
 			"maxProperties",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"additionalProperties",
 			"comments"
@@ -409,8 +553,24 @@ making sure that you maintain a proper JSON format.
 			"dependencies",
 			"minProperties",
 			"maxProperties",
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"additionalProperties",
 			"comments"
 		],
@@ -438,8 +598,24 @@ making sure that you maintain a proper JSON format.
 					"set<union>"
 				]
 			},
-			"required",
+			{
+				"propertyName": "Not null",
+				"propertyKeyword": "required",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
 			"primaryKey",
+			{
+				"propertyName": "Unique",
+				"propertyKeyword": "unique",
+				"enableForReference": true,
+				"propertyType": "checkbox"
+			},
+			{
+				"propertyName": "Check",
+				"propertyKeyword": "check",
+				"propertyType": "text"
+			},
 			"dependencies",
 			"comments"
 		]
