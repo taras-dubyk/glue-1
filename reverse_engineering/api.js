@@ -110,6 +110,7 @@ module.exports = {
 
 const mapTableData = ({ Table }, dbDescription) => {
 	const classification = getClassification(Table.Parameters);
+	const partitionKeys = Table.PartitionKeys || [];
 	const tableData = {
 		dbName: Table.DatabaseName,
 		collectionName: Table.Name,
@@ -120,7 +121,7 @@ const mapTableData = ({ Table }, dbDescription) => {
 			description: Table.Description,
 			externalTable: Table.TableType === 'EXTERNAL_TABLE',
 			tableProperties: mapTableProperties(Table.Parameters),
-			compositePartitionKey: Table.PartitionKeys.map(item => item.Name),
+			compositePartitionKey: partitionKeys.map(item => item.Name),
 			compositeClusteringKey: Table.StorageDescriptor.BucketColumns,
 			sortedByKey: mapSortColumns(Table.StorageDescriptor.SortColumns),
 			compressed: Table.StorageDescriptor.Compressed,
@@ -137,7 +138,7 @@ const mapTableData = ({ Table }, dbDescription) => {
 		},
 		documents: [],
 		validation: {
-			jsonSchema:	getColumns([...Table.StorageDescriptor.Columns, ...Table.PartitionKeys])
+			jsonSchema:	getColumns([...Table.StorageDescriptor.Columns, ...partitionKeys])
 		}
 	};
 	return tableData;
