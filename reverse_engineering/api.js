@@ -76,7 +76,8 @@ module.exports = {
 				const tablesDataPromise = databases.map(async dbName => {
 					const db = await this.glueInstance.getDatabase({ Name: dbName }).promise();
 					const dbDescription = db.Database.Description;
-					const dbTables = tables[dbName].map(async tableName => {
+					const selectedDBTables = tables[dbName] || [];
+					const dbTables = selectedDBTables.map(async tableName => {
 						const rawTableData = await this.glueInstance
 							.getTable({ DatabaseName: dbName, Name: tableName })
 							.promise();
