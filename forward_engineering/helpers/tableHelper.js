@@ -1,6 +1,6 @@
 'use strict'
 
-const { buildStatement, getName, getTab, indentString } = require('./generalHelper');
+const { buildStatement, getName, getTab, indentString, replaceSpaceWithUnderscore } = require('./generalHelper');
 const { getColumnsStatement, getColumnStatement, getColumns } = require('./columnHelper');
 const keyHelper = require('./keyHelper');
 
@@ -123,9 +123,9 @@ const getStoredAsStatement = (tableData) => {
 };
 
 const getTableStatement = (containerData, entityData, jsonSchema, definitions, foreignKeyStatement) => {
-	const dbName = getName(getTab(0, containerData));
+	const dbName = replaceSpaceWithUnderscore(getName(getTab(0, containerData)));
 	const tableData = getTab(0, entityData);
-	const tableName = getName(tableData);
+	const tableName = replaceSpaceWithUnderscore(getName(tableData));
 	const columns = getColumns(jsonSchema);
 	const keyNames = keyHelper.getKeyNames(tableData, jsonSchema, definitions);
 

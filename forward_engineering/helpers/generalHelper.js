@@ -53,11 +53,16 @@ const prepareName = name => {
 	return name;
 };
 
+const replaceSpaceWithUnderscore = (name = '') => {
+	return name.replace(/\s/g, '_');
+}
+
 module.exports = {
 	buildStatement,
 	getName,
 	getTab,
 	indentString,
 	getTypeDescriptor,
-	prepareName
+	prepareName,
+	replaceSpaceWithUnderscore
 };

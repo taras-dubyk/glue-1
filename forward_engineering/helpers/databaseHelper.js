@@ -1,6 +1,6 @@
 'use strict'
 
-const { buildStatement, getName, getTab } = require('./generalHelper');
+const { buildStatement, getName, getTab, replaceSpaceWithUnderscore } = require('./generalHelper');
 
 const getCreateStatement = ({
 	name, comment, location, dbProperties
@@ -14,7 +14,7 @@ const getDatabaseStatement = (containerData) => {
 	const tab = getTab(0, containerData);
 	
 	return getCreateStatement({
-		name: getName(tab),
+		name: replaceSpaceWithUnderscore(getName(tab)),
 		comment: tab.comments
 	});
 };

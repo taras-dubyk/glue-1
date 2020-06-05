@@ -1,6 +1,6 @@
 'use strict'
 
-const { getTab, buildStatement, getName } = require('./generalHelper');
+const { getTab, buildStatement, getName, replaceSpaceWithUnderscore } = require('./generalHelper');
 const schemaHelper = require('./jsonSchemaHelper');
 
 const getIndexStatement = ({
@@ -29,13 +29,13 @@ const getIndexKeys = (keys, jsonSchema, definitions) => {
 };
 
 const getIndexes = (containerData, entityData, jsonSchema, definitions) => {
-	const dbName = getName(getTab(0, containerData));
+	const dbName = replaceSpaceWithUnderscore(getName(getTab(0, containerData)));
 	const tableData = getTab(0, entityData);
 	const indexesData = getTab(1, entityData).SecIndxs || [];
-	const tableName = getName(tableData);
+	const tableName = replaceSpaceWithUnderscore(getName(tableData));
 
 	return indexesData.map(indexData => getIndexStatement({
-		name: indexData.name,
+		name: replaceSpaceWithUnderscore(indexData.name),
 		dbName: dbName,
 		tableName: tableName,
 		columns: getIndexKeys(indexData.SecIndxKey, jsonSchema, definitions),
