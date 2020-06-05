@@ -1,6 +1,6 @@
 'use strict'
 
-const { getName } = require('./generalHelper');
+const { getName, prepareName } = require('./generalHelper');
 
 const getPathById = (schema, id, path) => {
 	if (schema.GUID === id) {
@@ -34,10 +34,10 @@ const getRootItemNameById = (id, properties) => {
 	const propertyName = Object.keys(properties).find(propertyName => (properties[propertyName].GUID === id));
 
 	if (properties[propertyName] && properties[propertyName].code) {
-		return properties[propertyName].code;
+		return prepareName(properties[propertyName].code);
 	}
 
-	return propertyName;
+	return prepareName(propertyName);
 };
 
 const findFieldNameById = (id, source) => {
@@ -109,9 +109,10 @@ const getIdToNameHashTable = (jsonSchemas) => {
 };
 
 const getNameByPath = (idToNameHashTable, path) => {
-	return path.map(id => {
+	const name = path.map(id => {
 		return idToNameHashTable[id] instanceof Number ? '$elem$' : idToNameHashTable[id];
 	}).join('.');
+	return prepareName(name);
 };
 
 const getPrimaryKeys = (jsonSchema) => {

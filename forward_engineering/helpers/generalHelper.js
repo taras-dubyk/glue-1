@@ -45,10 +45,19 @@ const getTypeDescriptor = (typeName) => {
 	}
 };
 
+const prepareName = name => {
+	const containSpaces = /\s/g;
+	if (containSpaces.test(name)) {
+		return `\`${name}\``;
+	}
+	return name;
+};
+
 module.exports = {
 	buildStatement,
 	getName,
 	getTab,
 	indentString,
-	getTypeDescriptor
+	getTypeDescriptor,
+	prepareName
 };
