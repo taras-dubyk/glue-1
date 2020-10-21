@@ -1,5 +1,6 @@
 'use strict'
 
+const { setDependencies, dependencies } = require('./helpers/appDependencies');
 const aws = require('../reverse_engineering/node_modules/aws-sdk');
 const { getDatabaseStatement } = require('./helpers/databaseHelper');
 const { getTableStatement } = require('./helpers/tableHelper');
@@ -8,6 +9,9 @@ const foreignKeyHelper = require('./helpers/foreignKeyHelper');
 const { getGlueDatabaseCreateStatement } = require('./helpers/awsCliScriptHelpers/glueDatabaseHeleper');
 const { getGlueTableCreateStatement } = require('./helpers/awsCliScriptHelpers/glueTableHelper');
 const { getApiStatements } = require('./helpers/awsCliScriptHelpers/applyToInstanceHelper');
+let _;
+
+const setAppDependencies = ({ lodash }) => _ = lodash;
 
 module.exports = {
 	generateScript(data, logger, callback) {
@@ -46,8 +50,10 @@ module.exports = {
 		}
 	},
 
-	generateContainerScript(data, logger, callback) {
+	generateContainerScript(data, logger, callback, app) {
 		try {
+			setDependencies(app);
+			setAppDependencies(dependencies);
 			const containerData = data.containerData;
 			const modelDefinitions = JSON.parse(data.modelDefinitions);
 			const externalDefinitions = JSON.parse(data.externalDefinitions);
@@ -64,7 +70,9 @@ module.exports = {
 					[
 						modelDefinitions,
 						externalDefinitions
-					]
+					],
+					[modelDefinitions, externalDefinitions],
+					containerData[0] && containerData[0].isActivated
 				);
 	
 				const entities = data.entities.reduce((result, entityId) => {
