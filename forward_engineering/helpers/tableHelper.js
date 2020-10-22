@@ -169,6 +169,9 @@ const getStoredAsStatement = (tableData) => {
 };
 
 const getTableProperties = (properties) => {
+	if(!properties){
+		return '';
+	}
 	return `(${properties.map(prop => `"${prop.tablePropKey}"="${prop.tablePropValue}"`).join(', ')})`;
 }
 
