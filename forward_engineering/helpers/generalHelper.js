@@ -1,9 +1,6 @@
 'use strict'
 
-const { dependencies } = require('./appDependencies');
-let _;
-
-const setDependencies = ({ lodash }) => _ = lodash;
+const _ = require('lodash');
 
 const buildStatement = (mainStatement, isActivated) => {
 	let composeStatements = (...statements) => {
@@ -21,9 +18,13 @@ const buildStatement = (mainStatement, isActivated) => {
 	};
 
 	const getStatement = (condition, statement) => {
+		if (statement === ')') {
+			return '\n)';
+		}
 		if (statement === ';') {
 			return statement;
 		}
+
 		if (condition) {
 			return '\n' + indentString(statement);
 		}
@@ -79,8 +80,6 @@ const commentDeactivatedStatements = (statement, isActivated = true) => {
 }
 
 const commentDeactivatedInlineKeys = (keys, deactivatedKeyNames) => {
-	setDependencies(dependencies);
-
 	const [activatedKeys, deactivatedKeys] = _.partition(
 		keys,
 		(key) =>
@@ -100,8 +99,6 @@ const commentDeactivatedInlineKeys = (keys, deactivatedKeyNames) => {
 }
 
 const removeRedundantTrailingCommaFromStatement = (statement) => {
-	setDependencies(dependencies);
-	
 	const splitedStatement = statement.split('\n');
 	if (splitedStatement.length < 4 || !splitedStatement[splitedStatement.length - 2].trim().startsWith('--')) {
 		return statement;

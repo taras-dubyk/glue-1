@@ -1,6 +1,5 @@
 'use strict'
 
-const { setDependencies, dependencies } = require('./helpers/appDependencies');
 const aws = require('../reverse_engineering/node_modules/aws-sdk');
 const { getDatabaseStatement } = require('./helpers/databaseHelper');
 const { getTableStatement } = require('./helpers/tableHelper');
@@ -9,9 +8,9 @@ const foreignKeyHelper = require('./helpers/foreignKeyHelper');
 const { getGlueDatabaseCreateStatement } = require('./helpers/awsCliScriptHelpers/glueDatabaseHeleper');
 const { getGlueTableCreateStatement } = require('./helpers/awsCliScriptHelpers/glueTableHelper');
 const { getApiStatements } = require('./helpers/awsCliScriptHelpers/applyToInstanceHelper');
-let _;
+const sqlFormatter = require('./custom_modules/sql-formatter');
+const _ = require('lodash');
 
-const setAppDependencies = ({ lodash }) => _ = lodash;
 
 module.exports = {
 	generateScript(data, logger, callback) {
@@ -24,7 +23,13 @@ module.exports = {
 			const entityData = data.entityData;
 
 			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
-				return callback(null, buildHiveScript(
+				const needMinify = (
+					_.get(data, 'options.additionalOptions', []).find(
+						(option) => option.id === 'minify'
+					) || {}
+				).value;
+
+				return callback(null, buildHiveScript(needMinify)(
 					getDatabaseStatement(containerData),
 					getTableStatement(containerData, entityData, jsonSchema, [
 						modelDefinitions,
@@ -50,10 +55,8 @@ module.exports = {
 		}
 	},
 
-	generateContainerScript(data, logger, callback, app) {
+	generateContainerScript(data, logger, callback) {
 		try {
-			setDependencies(app);
-			setAppDependencies(dependencies);
 			const containerData = data.containerData;
 			const modelDefinitions = JSON.parse(data.modelDefinitions);
 			const externalDefinitions = JSON.parse(data.externalDefinitions);
@@ -61,6 +64,12 @@ module.exports = {
 			const jsonSchema = parseEntities(data.entities, data.jsonSchema);
 			const internalDefinitions = parseEntities(data.entities, data.internalDefinitions);
 			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
+				const needMinify = (
+					_.get(data, 'options.additionalOptions', []).find(
+						(option) => option.id === 'minify'
+					) || {}
+				).value;
+
 				const foreignKeyHashTable = foreignKeyHelper.getForeignKeyHashTable(
 					data.relationships,
 					data.entities,
@@ -102,7 +111,7 @@ module.exports = {
 					return result;
 				}, []).join('\n');
 	
-				return callback(null, buildHiveScript(
+				return callback(null, buildHiveScript(needMinify)(
 					databaseStatement,
 					...entities,
 					foreignKeys
@@ -194,8 +203,13 @@ const composeCLIStatements = (statements = []) => {
 	return statements.join('\n\n');
 }
 
-const buildHiveScript = (...statements) => {
-	return statements.filter(statement => statement).join('\n\n');
+const buildHiveScript = (needMinify) => (...statements) => {
+	const script = statements.filter(statement => statement).join('\n\n');
+	if(needMinify) {
+		return script;
+	}
+
+	return sqlFormatter.format(script, { indent: '    ' });
 };
 
 const parseEntities = (entities, serializedItems) => {

@@ -3,10 +3,7 @@
 const { buildStatement, getName, getTab, indentString, replaceSpaceWithUnderscore, commentDeactivatedInlineKeys, removeRedundantTrailingCommaFromStatement } = require('./generalHelper');
 const { getColumnsStatement, getColumnStatement, getColumns } = require('./columnHelper');
 const keyHelper = require('./keyHelper');
-const { dependencies } = require('./appDependencies');
-
-let _;
-const setDependencies = ({ lodash }) => _ = lodash;
+const _ = require('lodash');
 
 const getCreateStatement = ({
 	dbName, tableName, isTemporary, isExternal, columnStatement, primaryKeyStatement, foreignKeyStatement, comment, partitionedByKeys, 
@@ -161,7 +158,7 @@ const getStoredAsStatement = (tableData) => {
 	}
 
 	if (tableData.storedAsTable === 'input/output format') {
-		return `STORED AS INPUTFORMAT '${tableData.inputFormatClassname}' OUTPUTFORMAT '${tableData.outputFormatClassname}'`;
+		return `STORED AS INPUTFORMAT '${tableData.inputFormatClassname || ''}' OUTPUTFORMAT '${tableData.outputFormatClassname || ''}'`;
 	}
 
 	if (tableData.storedAsTable === 'by') {
@@ -172,8 +169,6 @@ const getStoredAsStatement = (tableData) => {
 };
 
 const getTableStatement = (containerData, entityData, jsonSchema, definitions, foreignKeyStatement) => {
-	setDependencies(dependencies);
-	
 	const dbName = replaceSpaceWithUnderscore(getName(getTab(0, containerData)));
 	const tableData = getTab(0, entityData);
 	const container = getTab(0, containerData);

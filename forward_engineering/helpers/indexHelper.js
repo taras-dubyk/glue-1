@@ -3,10 +3,7 @@
 const { getTab, buildStatement, getName, replaceSpaceWithUnderscore } = require('./generalHelper');
 const schemaHelper = require('./jsonSchemaHelper');
 const { getItemByPath } = require('./jsonSchemaHelper');
-const { dependencies } = require('./appDependencies');
-let _;
-
-const setDependencies = ({ lodash }) => _ = lodash;
+const _ = require('lodash');
 
 
 const getIndexStatement = ({
@@ -54,7 +51,6 @@ const getIndexKeys = (keys, jsonSchema, definitions) => {
 };
 
 const getIndexes = (containerData, entityData, jsonSchema, definitions) => {
-	setDependencies(dependencies);
 	const dbData = getTab(0, containerData);
 	const dbName = replaceSpaceWithUnderscore(getName(dbData));
 	const tableData = getTab(0, entityData);

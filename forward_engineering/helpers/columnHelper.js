@@ -6,7 +6,6 @@ const getStructChild = (name, type, comment) => `${name}: ${type}` + (comment ? 
 
 const getStructChildProperties = getTypeByProperty => property => {
 	const childProperties = Object.keys(property.properties || {});
-	let result = [];
 	const activatedProps = [];
 	const deactivatedProps = [];
 
