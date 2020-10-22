@@ -1,10 +1,11 @@
 const { CLI, CREATE_DATABASE } = require('./cliConstants');
+const _ = require('lodash');
 
 const getGlueDatabaseCreateStatement = (containerData) => {
 	const dbParameters = {
 		DatabaseInput: {
-			Name: containerData.name,
-			Description: containerData.description,
+			Name: _.get(containerData, 'name', ''),
+			Description: _.get(containerData, 'description', ''),
 		}
 	}
 
