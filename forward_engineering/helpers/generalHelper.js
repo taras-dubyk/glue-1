@@ -98,6 +98,14 @@ const commentDeactivatedInlineKeys = (keys, deactivatedKeyNames) => {
 	return { isAllKeysDeactivated: false, keysString: `${activatedKeys.join(', ')} /*, ${deactivatedKeys.join(', ')} */` }
 }
 
+const commentStatementIfAllKeysDeactivated = (statement, keys) => {
+	if(keys.isAllKeysDeactivated){
+		return `/* ${statement} */`;
+	}
+
+	return statement;
+}
+
 const removeRedundantTrailingCommaFromStatement = (statement) => {
 	const splitedStatement = statement.split('\n');
 	if (splitedStatement.length < 4 || !splitedStatement[splitedStatement.length - 2].trim().startsWith('--')) {
@@ -127,4 +135,5 @@ module.exports = {
 	commentDeactivatedStatements,
 	commentDeactivatedInlineKeys,
 	removeRedundantTrailingCommaFromStatement,
+	commentStatementIfAllKeysDeactivated,
 };

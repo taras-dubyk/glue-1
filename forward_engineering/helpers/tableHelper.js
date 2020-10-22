@@ -1,6 +1,6 @@
 'use strict'
 
-const { buildStatement, getName, getTab, indentString, replaceSpaceWithUnderscore, commentDeactivatedInlineKeys, removeRedundantTrailingCommaFromStatement } = require('./generalHelper');
+const { buildStatement, getName, getTab, indentString, replaceSpaceWithUnderscore, commentDeactivatedInlineKeys, removeRedundantTrailingCommaFromStatement, commentStatementIfAllKeysDeactivated } = require('./generalHelper');
 const { getColumnsStatement, getColumnStatement, getColumns } = require('./columnHelper');
 const keyHelper = require('./keyHelper');
 const _ = require('lodash');
@@ -21,9 +21,9 @@ const getCreateStatement = ({
 		(foreignKeyStatement, indentString(foreignKeyStatement))
 		(true, ')')
 		(comment, `COMMENT '${comment}'`)
-		(partitionedByKeys, `PARTITIONED BY (${partitionedByKeys})`)
-		(clusteredKeys, `CLUSTERED BY (${clusteredKeys})`)
-		(sortedKeys, `SORTED BY (${sortedKeys})`)
+		(partitionedByKeys,  commentStatementIfAllKeysDeactivated(`PARTITIONED BY (${partitionedByKeys.keysString})`, partitionedByKeys))
+		(clusteredKeys, commentStatementIfAllKeysDeactivated(`CLUSTERED BY (${clusteredKeys.keysString})`, clusteredKeys))
+		(sortedKeys, commentStatementIfAllKeysDeactivated(`SORTED BY (${sortedKeys.keysString})`, sortedKeys))
 		(numBuckets, `INTO ${numBuckets} BUCKETS`)
 		(skewedStatement, skewedStatement)
 		(rowFormatStatement, `ROW FORMAT ${rowFormatStatement}`)
@@ -60,8 +60,8 @@ const getClusteringKeys = (clusteredKeys, deactivatedColumnNames, isParentItemAc
 	if (!isParentItemActivated) {
 		return clusteredKeys.join(', ');
 	}
-	const { keysString } = commentDeactivatedInlineKeys(clusteredKeys, deactivatedColumnNames);
-	return keysString;
+
+	return commentDeactivatedInlineKeys(clusteredKeys, deactivatedColumnNames);
 };
 
 const getSortedKeys = (sortedKeys, deactivatedColumnNames, isParentItemActivated) => {
@@ -72,13 +72,13 @@ const getSortedKeys = (sortedKeys, deactivatedColumnNames, isParentItemActivated
 	}
 	const [activatedKeys, deactivatedKeys] = _.partition(sortedKeys, keyData => !deactivatedColumnNames.has(keyData.name));
 	if (!isParentItemActivated || deactivatedKeys.length === 0) {
-		return getSortKeysStatement(sortedKeys);
+		return { isAllKeysDeactivated: false, keysString: getSortKeysStatement(sortedKeys)};
 	}
 	if (activatedKeys.length === 0) {
-		return `/* ${getSortKeysStatement(deactivatedKeys)} */`;
+		return { isAllKeysDeactivated: true, keysString: getSortKeysStatement(deactivatedKeys)};
 	}
 
-	return `${getSortKeysStatement(activatedKeys)} /*, ${getSortKeysStatement(deactivatedKeys)} */`;
+	return { isAllKeysDeactivated: false, keysString: `${getSortKeysStatement(activatedKeys)} /*, ${getSortKeysStatement(deactivatedKeys)} */`};
 };
 
 const getPartitionKeyStatement = (keys, isParentActivated) => {
@@ -90,13 +90,13 @@ const getPartitionKeyStatement = (keys, isParentActivated) => {
 
 	const [activatedKeys, deactivatedKeys] = _.partition(keys, key => key.isActivated);
 	if (!isParentActivated || deactivatedKeys.length === 0) {
-		return getKeysStatement(keys);
+		return { isAllKeysDeactivated: false, keysString: getKeysStatement(keys)};
 	}
 	if (activatedKeys.length === 0) {
-		return `/* ${getKeysStatement(keys)} */`;
+		return { isAllKeysDeactivated: true, keysString: getKeysStatement(keys)};
 	}
 
-	return `${getKeysStatement(activatedKeys)} /*, ${getKeysStatement(activatedKeys)} */`;
+	return { isAllKeysDeactivated: false, keysString:`${getKeysStatement(activatedKeys)} /*, ${getKeysStatement(deactivatedKeys)} */`};
 };
 
 const getPartitionsKeys = (columns, partitions) => {
@@ -168,6 +168,10 @@ const getStoredAsStatement = (tableData) => {
 	return `STORED AS ${tableData.storedAsTable.toUpperCase()}`;
 };
 
+const getTableProperties = (properties) => {
+	return `(${properties.map(prop => `"${prop.tablePropKey}"="${prop.tablePropValue}"`).join(', ')})`;
+}
+
 const getTableStatement = (containerData, entityData, jsonSchema, definitions, foreignKeyStatement) => {
 	const dbName = replaceSpaceWithUnderscore(getName(getTab(0, containerData)));
 	const tableData = getTab(0, entityData);
@@ -194,7 +198,7 @@ const getTableStatement = (containerData, entityData, jsonSchema, definitions, f
 		rowFormatStatement: getRowFormat(tableData),
 		storedAsStatement: getStoredAsStatement(tableData),
 		location: tableData.location,
-		tableProperties: tableData.tableProperties,
+		tableProperties: getTableProperties(tableData.tableProperties),
 		selectStatement: '',
 		isActivated: isTableActivated,
 	});
