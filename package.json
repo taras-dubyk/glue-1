@@ -23,10 +23,9 @@
 			"enableReverseEngineering": true,
 			"disableChoices": false,
 			"enableJsonType": true,
-			"FEScriptCommentsSupported": {
-				"awsCli": false,
-				"hiveQl": true
-			}
+			"FEScriptCommentsSupported": [{
+				"supportedFETargets": ["hiveQl"]
+			}]
 		}
 	},
 	"description": "Hackolade plugin for AWS Glue Data Catalog"
