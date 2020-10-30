@@ -2,6 +2,8 @@
 
 const schemaHelper = require('./jsonSchemaHelper');
 const { getName, getTab, commentDeactivatedStatements } = require('./generalHelper');
+const { getItemByPath } = require('./jsonSchemaHelper');
+const _ = require('lodash');
 
 const getIdToNameHashTable = (relationships, entities, jsonSchemas, internalDefinitions, otherDefinitions) => {
 	const entitiesForHashing = entities.filter(entityId => relationships.find(relationship => (
@@ -34,7 +36,9 @@ const getForeignKeyHashTable = (relationships, entities, entityData, jsonSchemas
 		const parentTableName = getName(parentTableData);
 		const childTableData = getTab(0, entityData[relationship.childCollection]);
 		const childTableName = getName(childTableData);
-        const groupKey = parentTableName + constraintName;
+		const groupKey = parentTableName + constraintName;
+		const childField = getItemByPath(relationship.childField.slice(1), jsonSchemas[relationship.childCollection]);
+		const parentField = getItemByPath(relationship.parentField.slice(1), jsonSchemas[relationship.parentCollection]);
 
         if (!hashTable[relationship.childCollection][groupKey]) {
             hashTable[relationship.childCollection][groupKey] = [];
@@ -47,11 +51,13 @@ const getForeignKeyHashTable = (relationships, entities, entityData, jsonSchemas
             parentTableName: parentTableName,
             childTableName: childTableName,
             parentColumn: schemaHelper.getNameByPath(idToNameHashTable, (relationship.parentField || []).slice(1)),
-			childColumn: schemaHelper.getNameByPath(idToNameHashTable, (relationship.childField || []).slice(1)),
-			isActivated:
-				isContainerActivated &&
-				(parentTableData && parentTableData.isActivated) &&
-				(childTableData && childTableData.isActivated),
+            childColumn: schemaHelper.getNameByPath(idToNameHashTable, (relationship.childField || []).slice(1)),
+            isActivated:
+                isContainerActivated &&
+                _.get(parentTableData, 'isActivated') &&
+                _.get(childTableData, 'isActivated') &&
+                _.get(childField, 'isActivated') &&
+                _.get(parentField, 'isActivated'),
         });
 
         return hashTable;
