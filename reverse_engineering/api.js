@@ -9,9 +9,9 @@ const https = require('https');
 this.glueInstance = null;
 
 module.exports = {
-	connect: function(connectionInfo, logger, cb, app) {
+	connect: async (connectionInfo, logger, cb, app) => {
 		const { accessKeyId, secretAccessKey, region, certAuthorityPath } = connectionInfo;
-		const certAuthority = getCertificateAuthority(certAuthorityPath);
+		const certAuthority = await getCertificateAuthority(certAuthorityPath);
 		const httpOptions = certAuthority ? {
 			httpOptions: {
 				agent: new https.Agent({
