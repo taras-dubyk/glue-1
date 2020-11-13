@@ -3,13 +3,23 @@ const aws = require('aws-sdk');
 const _ = require('lodash');
 const logHelper = require('./logHelper');
 const schemaHelper = require('./schemaHelper');
+const fs = require('fs');
+const https = require('https');
 
 this.glueInstance = null;
 
 module.exports = {
-	connect: function(connectionInfo, logger, cb, app) {
-		const { accessKeyId, secretAccessKey, region } = connectionInfo;
-		aws.config.update({ accessKeyId, secretAccessKey, region });
+	connect: async (connectionInfo, logger, cb, app) => {
+		const { accessKeyId, secretAccessKey, region, certAuthorityPath } = connectionInfo;
+		const certAuthority = await getCertificateAuthority(certAuthorityPath);
+		const httpOptions = certAuthority ? {
+			httpOptions: {
+				agent: new https.Agent({
+					rejectUnauthorized: true,
+					ca: [certAuthority]
+				})}
+			} : {};
+		aws.config.update({ accessKeyId, secretAccessKey, region, ...httpOptions });
 
 		const glueInstance = new aws.Glue();
 		cb(glueInstance);
@@ -215,3 +225,18 @@ const mapTableProperties = (parameters = {}) => {
 		});
 	}, []);
 }
+
+const getCertificateAuthority = path => {
+	if (!path) {
+		return Promise.resolve('');
+	}
+
+	return new Promise(resolve => {
+		fs.readFile(path, 'utf8', (err, data) => {
+			if (err) {
+				resolve('');
+			}
+			resolve(data);
+		});
+	});
+};
