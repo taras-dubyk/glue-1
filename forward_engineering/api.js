@@ -188,7 +188,7 @@ const buildAWSCLIScript = (containerData, tableSchema) => {
 const buildAWSCLIModelScript = (containerData, tablesSchemas = {}) => {
 	const dbStatement = getGlueDatabaseCreateStatement(containerData[0]);
 	const tablesStatements = Object.entries(tablesSchemas).map(([key, value]) => {
-		return getGlueTableCreateStatement(value, containerData[0].name);
+		return getGlueTableCreateStatement(value, _.get(containerData[0], 'name', ''));
 	});
 	return composeCLIStatements([dbStatement, ...tablesStatements]);
 }
