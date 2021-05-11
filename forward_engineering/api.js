@@ -98,7 +98,7 @@ module.exports = {
 					];
 	
 					return result.concat([
-						getTableStatement(_)(...args),
+						getTableStatement(...args),
 						getIndexes(...args),
 					]);
 				}, []);
