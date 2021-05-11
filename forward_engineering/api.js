@@ -8,6 +8,9 @@ const foreignKeyHelper = require('./helpers/foreignKeyHelper');
 const { getGlueDatabaseCreateStatement } = require('./helpers/awsCliScriptHelpers/glueDatabaseHeleper');
 const { getGlueTableCreateStatement } = require('./helpers/awsCliScriptHelpers/glueTableHelper');
 const { getApiStatements } = require('./helpers/awsCliScriptHelpers/applyToInstanceHelper');
+const sqlFormatter = require('./custom_modules/sql-formatter');
+const _ = require('lodash');
+
 
 module.exports = {
 	generateScript(data, logger, callback) {
@@ -20,7 +23,13 @@ module.exports = {
 			const entityData = data.entityData;
 
 			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
-				return callback(null, buildHiveScript(
+				const needMinify = (
+					_.get(data, 'options.additionalOptions', []).find(
+						(option) => option.id === 'minify'
+					) || {}
+				).value;
+
+				return callback(null, buildHiveScript(needMinify)(
 					getDatabaseStatement(containerData),
 					getTableStatement(containerData, entityData, jsonSchema, [
 						modelDefinitions,
@@ -55,6 +64,12 @@ module.exports = {
 			const jsonSchema = parseEntities(data.entities, data.jsonSchema);
 			const internalDefinitions = parseEntities(data.entities, data.internalDefinitions);
 			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
+				const needMinify = (
+					_.get(data, 'options.additionalOptions', []).find(
+						(option) => option.id === 'minify'
+					) || {}
+				).value;
+
 				const foreignKeyHashTable = foreignKeyHelper.getForeignKeyHashTable(
 					data.relationships,
 					data.entities,
@@ -64,7 +79,9 @@ module.exports = {
 					[
 						modelDefinitions,
 						externalDefinitions
-					]
+					],
+					[modelDefinitions, externalDefinitions],
+					containerData[0] && containerData[0].isActivated
 				);
 	
 				const entities = data.entities.reduce((result, entityId) => {
@@ -94,7 +111,7 @@ module.exports = {
 					return result;
 				}, []).join('\n');
 	
-				return callback(null, buildHiveScript(
+				return callback(null, buildHiveScript(needMinify)(
 					databaseStatement,
 					...entities,
 					foreignKeys
@@ -171,7 +188,7 @@ const buildAWSCLIScript = (containerData, tableSchema) => {
 const buildAWSCLIModelScript = (containerData, tablesSchemas = {}) => {
 	const dbStatement = getGlueDatabaseCreateStatement(containerData[0]);
 	const tablesStatements = Object.entries(tablesSchemas).map(([key, value]) => {
-		return getGlueTableCreateStatement(value, containerData[0].name);
+		return getGlueTableCreateStatement(value, _.get(containerData[0], 'name', ''));
 	});
 	return composeCLIStatements([dbStatement, ...tablesStatements]);
 }
@@ -186,8 +203,13 @@ const composeCLIStatements = (statements = []) => {
 	return statements.join('\n\n');
 }
 
-const buildHiveScript = (...statements) => {
-	return statements.filter(statement => statement).join('\n\n');
+const buildHiveScript = (needMinify) => (...statements) => {
+	const script = statements.filter(statement => statement).join('\n\n');
+	if(needMinify) {
+		return script;
+	}
+
+	return sqlFormatter.format(script, { indent: '    ' });
 };
 
 const parseEntities = (entities, serializedItems) => {

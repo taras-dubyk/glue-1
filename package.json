@@ -1,7 +1,7 @@
 {
 	"name": "Glue",
-	"version": "0.1.7",
-	"versionDate": "2020-06-05",
+	"version": "0.1.13",
+	"versionDate": "2021-04-16",
 	"author": "hackolade",
 	"engines": {
 		"hackolade": "3.5.5",
@@ -22,7 +22,10 @@
 			"disableMultipleTypes": false,
 			"enableReverseEngineering": true,
 			"disableChoices": false,
-			"enableJsonType": true
+			"enableJsonType": true,
+			"FEScriptCommentsSupported": [{
+				"supportedFETargets": ["hiveQl"]
+			}]
 		}
 	},
 	"description": "Hackolade plugin for AWS Glue Data Catalog"

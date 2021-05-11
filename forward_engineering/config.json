@@ -24,5 +24,13 @@
 			}]
 		}
 	],
-	"resolvedDefinitions": true
+	"resolvedDefinitions": true,
+	"additionalOptions": [
+		{
+			"id": "minify",
+			"value": false,
+			"name": "Minify",
+			"targetFEKeywords": ["hiveQl"]
+		}
+	]
 }
