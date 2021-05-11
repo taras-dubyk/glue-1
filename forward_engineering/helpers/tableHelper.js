@@ -3,7 +3,7 @@
 const { buildStatement, getName, getTab, indentString, replaceSpaceWithUnderscore, commentDeactivatedInlineKeys, removeRedundantTrailingCommaFromStatement, commentStatementIfAllKeysDeactivated } = require('./generalHelper');
 const { getColumnsStatement, getColumnStatement, getColumns } = require('./columnHelper');
 const keyHelper = require('./keyHelper');
-const _ = require('lodash');
+const { dependencies } = require('./appDependencies');
 
 const getCreateStatement = ({
 	dbName, tableName, isTemporary, isExternal, columnStatement, primaryKeyStatement, foreignKeyStatement, comment, partitionedByKeys, 
@@ -70,7 +70,7 @@ const getSortedKeys = (sortedKeys, deactivatedColumnNames, isParentItemActivated
 	if (!Array.isArray(sortedKeys) || !sortedKeys.length) {
 		return '';
 	}
-	const [activatedKeys, deactivatedKeys] = _.partition(sortedKeys, keyData => !deactivatedColumnNames.has(keyData.name));
+	const [activatedKeys, deactivatedKeys] = dependencies.lodash.partition(sortedKeys, keyData => !deactivatedColumnNames.has(keyData.name));
 	if (!isParentItemActivated || deactivatedKeys.length === 0) {
 		return { isAllKeysDeactivated: false, keysString: getSortKeysStatement(sortedKeys)};
 	}
@@ -88,7 +88,7 @@ const getPartitionKeyStatement = (keys, isParentActivated) => {
 		return '';
 	}
 
-	const [activatedKeys, deactivatedKeys] = _.partition(keys, key => key.isActivated);
+	const [activatedKeys, deactivatedKeys] = dependencies.lodash.partition(keys, key => key.isActivated);
 	if (!isParentActivated || deactivatedKeys.length === 0) {
 		return { isAllKeysDeactivated: false, keysString: getKeysStatement(keys)};
 	}

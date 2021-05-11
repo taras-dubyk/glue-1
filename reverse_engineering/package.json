@@ -4,8 +4,7 @@
   "description": "",
   "author": "Hackolade",
   "dependencies": {
-    "aws-sdk": "^2.589.0",
-    "lodash": "^4.17.15"
+    "aws-sdk": "^2.589.0"
   },
   "installed": true
 }

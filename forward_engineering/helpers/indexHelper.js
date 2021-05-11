@@ -1,9 +1,9 @@
 'use strict'
 
+const { dependencies } = require('../appDependencies');
 const { getTab, buildStatement, getName, replaceSpaceWithUnderscore } = require('./generalHelper');
 const schemaHelper = require('./jsonSchemaHelper');
 const { getItemByPath } = require('./jsonSchemaHelper');
-const _ = require('lodash');
 
 
 const getIndexStatement = ({
@@ -26,7 +26,7 @@ const getIndexKeys = (keys, jsonSchema, definitions) => {
 
 	const paths = schemaHelper.getPathsByIds(keys.map(key => key.keyId), [jsonSchema, ...definitions]);
 	const idToNameHashTable = schemaHelper.getIdToNameHashTable([jsonSchema, ...definitions]);
-	const [activatedKeys, deactivatedKeys] = _.partition(paths, path => {
+	const [activatedKeys, deactivatedKeys] = dependencies.lodash.partition(paths, path => {
 		const item = getItemByPath(path, jsonSchema);
 		return item ? item.isActivated : true;
 	});

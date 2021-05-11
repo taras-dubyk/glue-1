@@ -9,12 +9,13 @@ const { getGlueDatabaseCreateStatement } = require('./helpers/awsCliScriptHelper
 const { getGlueTableCreateStatement } = require('./helpers/awsCliScriptHelpers/glueTableHelper');
 const { getApiStatements } = require('./helpers/awsCliScriptHelpers/applyToInstanceHelper');
 const sqlFormatter = require('./custom_modules/sql-formatter');
-const _ = require('lodash');
+const { setDependencies, dependencies } = require('./appDependencies');
 
 
 module.exports = {
-	generateScript(data, logger, callback) {
+	generateScript(data, logger, callback, app) {
 		try {
+			setDependencies(app);
 			const jsonSchema = JSON.parse(data.jsonSchema);
 			const modelDefinitions = JSON.parse(data.modelDefinitions);
 			const internalDefinitions = JSON.parse(data.internalDefinitions);
@@ -24,7 +25,7 @@ module.exports = {
 
 			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
 				const needMinify = (
-					_.get(data, 'options.additionalOptions', []).find(
+					dependencies.lodash.get(data, 'options.additionalOptions', []).find(
 						(option) => option.id === 'minify'
 					) || {}
 				).value;
@@ -55,8 +56,9 @@ module.exports = {
 		}
 	},
 
-	generateContainerScript(data, logger, callback) {
+	generateContainerScript(data, logger, callback, app) {
 		try {
+			setDependencies(app);
 			const containerData = data.containerData;
 			const modelDefinitions = JSON.parse(data.modelDefinitions);
 			const externalDefinitions = JSON.parse(data.externalDefinitions);
@@ -65,7 +67,7 @@ module.exports = {
 			const internalDefinitions = parseEntities(data.entities, data.internalDefinitions);
 			if (data.options.targetScriptOptions && data.options.targetScriptOptions.keyword === 'hiveQl') {
 				const needMinify = (
-					_.get(data, 'options.additionalOptions', []).find(
+					dependencies.lodash.get(data, 'options.additionalOptions', []).find(
 						(option) => option.id === 'minify'
 					) || {}
 				).value;
@@ -96,7 +98,7 @@ module.exports = {
 					];
 	
 					return result.concat([
-						getTableStatement(...args),
+						getTableStatement(_)(...args),
 						getIndexes(...args),
 					]);
 				}, []);
@@ -130,6 +132,7 @@ module.exports = {
 	},
 
 	async applyToInstance(data, logger, callback, app) {
+		setDependencies(app);
 		if (!data.script) {
 			return callback({ message: 'Empty script' });
 		}
@@ -165,6 +168,7 @@ module.exports = {
 	},
 
 	async testConnection(connectionInfo, logger, callback, app) {
+		setDependencies(app);
 		logger.log('info', connectionInfo, 'Test connection', connectionInfo.hiddenKeys);
 
 		const glueInstance = getGlueInstance(connectionInfo, app);
@@ -188,7 +192,7 @@ const buildAWSCLIScript = (containerData, tableSchema) => {
 const buildAWSCLIModelScript = (containerData, tablesSchemas = {}) => {
 	const dbStatement = getGlueDatabaseCreateStatement(containerData[0]);
 	const tablesStatements = Object.entries(tablesSchemas).map(([key, value]) => {
-		return getGlueTableCreateStatement(value, _.get(containerData[0], 'name', ''));
+		return getGlueTableCreateStatement(value, dependencies.lodash.get(containerData[0], 'name', ''));
 	});
 	return composeCLIStatements([dbStatement, ...tablesStatements]);
 }

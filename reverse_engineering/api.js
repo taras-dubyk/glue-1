@@ -1,15 +1,16 @@
 'use strict';
 const aws = require('aws-sdk');
-const _ = require('lodash');
 const logHelper = require('./logHelper');
 const schemaHelper = require('./schemaHelper');
 const fs = require('fs');
 const https = require('https');
 
 this.glueInstance = null;
+const { setDependencies, dependencies } = require('./appDependencies');
 
 module.exports = {
 	connect: async (connectionInfo, logger, cb, app) => {
+		setDependencies(app);
 		const { accessKeyId, secretAccessKey, region } = connectionInfo;
 		const sslOptions = await getSslOptions(connectionInfo);
 		const httpOptions = sslOptions.ssl ? {
@@ -20,7 +21,6 @@ module.exports = {
 				})},
 				...sslOptions
 			} : {};
-			debugger;
 		aws.config.update({ accessKeyId, secretAccessKey, region, ...httpOptions });
 
 		const glueInstance = new aws.Glue();
@@ -32,6 +32,7 @@ module.exports = {
 	},
 
 	testConnection: function(connectionInfo, logger, cb, app) {
+		setDependencies(app);
 		logInfo('Test connection', connectionInfo, logger);
 		const connectionCallback = async (glueInstance) => {
 			try {
@@ -47,6 +48,7 @@ module.exports = {
 	},
 
 	getDbCollectionsNames: function(connectionInfo, logger, cb, app) {
+		setDependencies(app);
 		const connectionCallback = async (glueInstance) => {
 			this.glueInstance = glueInstance;
 			try {
@@ -77,6 +79,7 @@ module.exports = {
 	},
 
 	getDbCollectionsData: function(data, logger, cb, app) {
+		setDependencies(app);
 		logger.log('info', data, 'Retrieving schema', data.hiddenKeys);
 		
 		const { collectionData } = data;
@@ -177,7 +180,7 @@ const getSerDeLibrary = (data = {}) => {
 }
 
 const mapSerDePaths = (data = {}) => {
-	return _.get(data, 'Parameters.paths', '').split(',');
+	return dependencies.lodash.get(data, 'Parameters.paths', '').split(',');
 }
 
 const mapSerDeParameters = (parameters = {}) => {

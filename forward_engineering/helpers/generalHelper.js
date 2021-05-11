@@ -1,6 +1,6 @@
 'use strict'
 
-const _ = require('lodash');
+const { dependencies } = require('../appDependencies');
 
 const buildStatement = (mainStatement, isActivated) => {
 	let composeStatements = (...statements) => {
@@ -80,7 +80,7 @@ const commentDeactivatedStatements = (statement, isActivated = true) => {
 }
 
 const commentDeactivatedInlineKeys = (keys, deactivatedKeyNames) => {
-	const [activatedKeys, deactivatedKeys] = _.partition(
+	const [activatedKeys, deactivatedKeys] = dependencies.lodash.partition(
 		keys,
 		(key) =>
 			!(
@@ -111,7 +111,7 @@ const removeRedundantTrailingCommaFromStatement = (statement) => {
 	if (splitedStatement.length < 4 || !splitedStatement[splitedStatement.length - 2].trim().startsWith('--')) {
 		return statement;
 	}
-	const lineWithTrailingCommaIndex = _.findLastIndex(splitedStatement, line => {
+	const lineWithTrailingCommaIndex = dependencies.lodash.findLastIndex(splitedStatement, line => {
 		if (line.trim() !== ');' && !line.trim().startsWith('--')) {
 			return true;
 		}

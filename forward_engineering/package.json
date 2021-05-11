@@ -5,6 +5,5 @@
   "author": "Hackolade",
   "installed": true,
   "dependencies": {
-    "lodash": "^4.17.20"
   }
 }

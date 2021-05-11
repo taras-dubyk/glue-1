@@ -3,7 +3,6 @@
 const schemaHelper = require('./jsonSchemaHelper');
 const { getName, getTab, commentDeactivatedStatements } = require('./generalHelper');
 const { getItemByPath } = require('./jsonSchemaHelper');
-const _ = require('lodash');
 
 const getIdToNameHashTable = (relationships, entities, jsonSchemas, internalDefinitions, otherDefinitions) => {
 	const entitiesForHashing = entities.filter(entityId => relationships.find(relationship => (
@@ -54,10 +53,10 @@ const getForeignKeyHashTable = (relationships, entities, entityData, jsonSchemas
             childColumn: schemaHelper.getNameByPath(idToNameHashTable, (relationship.childField || []).slice(1)),
             isActivated:
                 isContainerActivated &&
-                _.get(parentTableData, 'isActivated') &&
-                _.get(childTableData, 'isActivated') &&
-                _.get(childField, 'isActivated') &&
-                _.get(parentField, 'isActivated'),
+                parentTableData?.isActivated &&
+				childTableData?.isActivated &&
+				childField?.isActivated &&
+				parentField?.isActivated,
         });
 
         return hashTable;
