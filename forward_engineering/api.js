@@ -198,8 +198,8 @@ const buildAWSCLIModelScript = (containerData, tablesSchemas = {}) => {
 }
 
 const getGlueInstance = (connectionInfo, app) => {
-	const { accessKeyId, secretAccessKey, region } = connectionInfo;
-	aws.config.update({ accessKeyId, secretAccessKey, region });
+	const { accessKeyId, secretAccessKey, region, sessionToken } = connectionInfo;
+	aws.config.update({ accessKeyId, secretAccessKey, region, sessionToken });
 	return new aws.Glue();
 }
 

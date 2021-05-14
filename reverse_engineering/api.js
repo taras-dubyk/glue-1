@@ -11,7 +11,7 @@ const { setDependencies, dependencies } = require('./appDependencies');
 module.exports = {
 	connect: async (connectionInfo, logger, cb, app) => {
 		setDependencies(app);
-		const { accessKeyId, secretAccessKey, region } = connectionInfo;
+		const { accessKeyId, secretAccessKey, region, sessionToken } = connectionInfo;
 		const sslOptions = await getSslOptions(connectionInfo);
 		const httpOptions = sslOptions.ssl ? {
 			httpOptions: {
@@ -21,7 +21,7 @@ module.exports = {
 				})},
 				...sslOptions
 			} : {};
-		aws.config.update({ accessKeyId, secretAccessKey, region, ...httpOptions });
+		aws.config.update({ accessKeyId, secretAccessKey, region, sessionToken, ...httpOptions });
 
 		const glueInstance = new aws.Glue();
 		cb(glueInstance);
